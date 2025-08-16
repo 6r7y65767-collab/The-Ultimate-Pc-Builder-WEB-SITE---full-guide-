@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Build VS Build</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background-color: #0f0f0f;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Background dotted animation */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: radial-gradient(#444 1px, transparent 1px);
+      background-size: 20px 20px;
+      animation: moveDots 20s linear infinite;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @keyframes moveDots {
+      from { background-position: 0 0; }
+      to { background-position: 1000px 1000px; }
+    }
+
+    h1 { margin-bottom: 30px; text-shadow: 0 0 15px #ff00ff,0 0 25px #ff66ff; }
+
+    .vs-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      z-index: 1;
+      position: relative;
+    }
+
+    select {
+      margin: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #111;
+      color: #0f0;
+      border: 2px solid #00ffcc;
+      transition: all 0.3s ease;
+    }
+    select:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    .build-box {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+      text-align: left;
+      box-shadow: 0 0 15px #ff00ff inset;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .build-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #ff00ff inset;
+    }
+
+    .build-title { font-size: 18px; color: #ff5555; margin-bottom: 10px; }
+    .build-parts { font-size: 14px; line-height: 1.6; margin-bottom: 10px; }
+    .fps { color: #00ffcc; font-weight: bold; margin-bottom: 10px; font-family: 'Roboto Mono', monospace; }
+    .price { color: #ffcc00; font-weight: bold; }
+
+    #compare-btn {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(45deg,#6600ff,#ff00ff,#ff0066);
+      color: #fff;
+      transition: all 0.5s ease;
+      text-shadow: 0 0 5px #fff;
+    }
+    #compare-btn:hover {
+      transform: scale(1.2) rotate(-2deg);
+      background: linear-gradient(45deg,#ff00ff,#ff0066,#6600ff);
+      box-shadow: 0 0 30px #ff00ff, 0 0 50px #ff66ff;
+      text-shadow: 0 0 15px #fff;
+    }
+
+    #winner {
+      margin-top: 25px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff,0 0 20px #ff66ff;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #555; padding: 5px; text-align: center; }
+    th { background-color: #222; color: #ff66ff; }
+    td { background-color: #111; }
+  </style>
+</head>
+<body>
+  <h1>Build VS Build</h1>
+
+  <div class="vs-container">
+    <div class="build-box">
+      <h3>Build 1</h3>
+      <label>CPU:</label><br>
+      <select id="cpu1" class="part-select"></select><br>
+      <label>GPU:</label><br>
+      <select id="gpu1" class="part-select"></select><br>
+      <label>RAM:</label><br>
+      <select id="ram1" class="part-select"></select><br>
+      <label>Storage:</label><br>
+      <select id="storage1" class="part-select"></select><br>
+      <label>PSU:</label><br>
+      <select id="psu1" class="part-select"></select><br>
+      <label>Case:</label><br>
+      <select id="case1" class="part-select"></select><br>
+      <label>Motherboard:</label><br>
+      <select id="motherboard1" class="part-select"></select><br>
+      <label>Cooler:</label><br>
+      <select id="cooler1" class="part-select"></select>
+      <div id="result1"></div>
+    </div>
+
+    <div class="build-box">
+      <h3>Build 2</h3>
+      <label>CPU:</label><br>
+      <select id="cpu2" class="part-select"></select><br>
+      <label>GPU:</label><br>
+      <select id="gpu2" class="part-select"></select><br>
+      <label>RAM:</label><br>
+      <select id="ram2" class="part-select"></select><br>
+      <label>Storage:</label><br>
+      <select id="storage2" class="part-select"></select><br>
+      <label>PSU:</label><br>
+      <select id="psu2" class="part-select"></select><br>
+      <label>Case:</label><br>
+      <select id="case2" class="part-select"></select><br>
+      <label>Motherboard:</label><br>
+      <select id="motherboard2" class="part-select"></select><br>
+      <label>Cooler:</label><br>
+      <select id="cooler2" class="part-select"></select>
+      <div id="result2"></div>
+    </div>
+  </div>
+
+  <button id="compare-btn">⚔️ Compare Builds</button>
+  <div id="winner"></div>
+
+  <script src="parts.js"></script>
+  <script>
+    const build1Selects = {
+      cpu: document.getElementById("cpu1"),
+      gpu: document.getElementById("gpu1"),
+      ram: document.getElementById("ram1"),
+      storage: document.getElementById("storage1"),
+      psu: document.getElementById("psu1"),
+      case: document.getElementById("case1"),
+      motherboard: document.getElementById("motherboard1"),
+      cooler: document.getElementById("cooler1")
+    };
+
+    const build2Selects = {
+      cpu: document.getElementById("cpu2"),
+      gpu: document.getElementById("gpu2"),
+      ram: document.getElementById("ram2"),
+      storage: document.getElementById("storage2"),
+      psu: document.getElementById("psu2"),
+      case: document.getElementById("case2"),
+      motherboard: document.getElementById("motherboard2"),
+      cooler: document.getElementById("cooler2")
+    };
+
+    const results = { build1: document.getElementById("result1"), build2: document.getElementById("result2") };
+    const winnerDiv = document.getElementById("winner");
+
+    function populateParts(selectObj){
+      for(let cat in parts){
+        const sel = selectObj[cat];
+        sel.innerHTML = `<option value="">Choose ${cat.toUpperCase()}</option>`;
+        parts[cat].forEach((item,index)=>{
+          const opt = document.createElement("option");
+          opt.value = index;
+          opt.textContent = `${item.name} - $${item.price}`;
+          sel.appendChild(opt);
+        });
+      }
+    }
+
+    populateParts(build1Selects);
+    populateParts(build2Selects);
+
+    function calculateBuild(selectObj){
+      let chosen = {};
+      let totalPrice = 0;
+      let baseFPS = 0;
+      let cpuBoost = 1;
+
+      for(let cat in selectObj){
+        const val = selectObj[cat].value;
+        if(val!=="") chosen[cat] = parts[cat][val];
+      }
+
+      if(chosen.cpu){
+        cpuBoost = chosen.cpu.fpsBoost;
+        totalPrice += chosen.cpu.price;
+      }
+      if(chosen.gpu){
+        baseFPS = chosen.gpu.fps;
+        totalPrice += chosen.gpu.price;
+      }
+
+      ["ram","storage","psu","case","motherboard","cooler"].forEach(cat=>{
+        if(chosen[cat]) totalPrice += chosen[cat].price;
+      });
+
+      let fpsTable = "";
+      if(baseFPS>0){
+        fpsTable = `<h4>Estimated FPS Per Game</h4><table><tr><th>Game</th><th>FPS</th></tr>`;
+        for(let game in games){
+          let fps = Math.round(baseFPS * cpuBoost * games[game]);
+          fpsTable += `<tr><td>${game}</td><td>${fps}</td></tr>`;
+        }
+        fpsTable += "</table>";
+      }
+
+      return { totalPrice, fpsTable, baseFPS, cpuBoost };
+    }
+
+    function updateResult(build, selectObj){
+      const res = calculateBuild(selectObj);
+      results[build].innerHTML = `
+        <p><strong>Total Price:</strong> $${res.totalPrice}</p>
+        ${res.fpsTable || "<p>Select CPU + GPU to see FPS</p>"}
+      `;
+      return res;
+    }
+
+    // Add change events
+    Object.values(build1Selects).forEach(sel=>{
+      sel.addEventListener("change", ()=> updateResult("build1", build1Selects));
+    });
+    Object.values(build2Selects).forEach(sel=>{
+      sel.addEventListener("change", ()=> updateResult("build2", build2Selects));
+    });
+
+    document.getElementById("compare-btn").addEventListener("click", ()=>{
+      const b1 = calculateBuild(build1Selects);
+      const b2 = calculateBuild(build2Selects);
+
+      if(!b1.baseFPS || !b2.baseFPS){
+        winnerDiv.textContent = "Select CPU + GPU for both builds!";
+        return;
+      }
+
+      const fpsSum1 = Object.values(games).reduce((acc, val)=> acc + val*b1.baseFPS*b1.cpuBoost,0);
+      const fpsSum2 = Object.values(games).reduce((acc, val)=> acc + val*b2.baseFPS*b2.cpuBoost,0);
+
+      if(fpsSum1 > fpsSum2) winnerDiv.textContent = "Build 1 is Better!";
+      else if(fpsSum2 > fpsSum1) winnerDiv.textContent = "Build 2 is Better!";
+      else winnerDiv.textContent = "Both builds are Equal!";
+    });
+  </script>
+</body>
+</html>
